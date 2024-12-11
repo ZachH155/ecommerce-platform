@@ -18,50 +18,31 @@ import group16.classes.Product.ProductDAO;
 public class App {
     private static UserService userService;
     private static ProductService productService;
+    private static User loggedUser = new User();
+    
 
     public static void main(String[] args) throws SQLException {
         Connection connectionD = DatabaseConnectionD.getCon();
         Connection connectionZ = DatabaseConnectionZ.getConnection();
-        ProductDAO productDAO = new ProductDAO(connectionD);
-        UserDAO userDAO = new UserDAO(connectionD);
+        ProductDAO productDAO = new ProductDAO(connectionZ);
+        UserDAO userDAO = new UserDAO(connectionZ);
         productService = new ProductService(productDAO);
         userService = new UserService(userDAO);
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("___________________________________________________");
+            System.out.println(showUserInfo(loggedUser));
             System.out.println("Enter a number");
             System.out.println("");
             System.out.println("1. Log in");
             System.out.println("2. Create account");
-            System.out.println("3. Product Management");
-            System.out.println("4. Admin Management");
-            System.out.println("5. Exit");
-            System.out.println("");
-            
 
-            switch (Integer.parseInt(scanner.nextLine())) {
-                case 1:
-                    
-                    break;
-                case 2:
-                    createUser(scanner);
-                    break;
-                case 3:
-                    productManagement(scanner);
-                    break;
-                case 4:
-                    adminManagement(scanner);
-                    break;
-                case 5:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Choose one of the available numbers");
-                    break;
+            checkUserRole(loggedUser, scanner);
+            
             }
         }
-    }
+    
 
     private static void createUser(Scanner scanner) throws SQLException {
         User user = new User();
@@ -83,7 +64,6 @@ public class App {
         user.setEmail(scanner.nextLine());
 
         userService.addUser(user);
-        System.out.println("User created successfully.");
     }
 
     private static void productManagement(Scanner scanner) throws SQLException {
@@ -233,5 +213,84 @@ public class App {
             System.out.println("Product: " + product);
             System.out.println("Seller: " + seller);
         }
+    }
+
+    private static void loginUser(Scanner scanner) throws SQLException {
+        System.out.println("___________________________________________________");
+        System.out.println("User Login");
+        System.out.println();
+
+        System.out.println("Enter username");
+        String username = scanner.nextLine();
+        
+        System.out.println("Enter password");
+        String password = scanner.nextLine();
+
+
+        userService.getUser(username, password);
+
+        if (userService.DAO.loginSuccess == true) {
+            loggedUser = userService.getUser(username, password);
+            System.out.println("Login successful");
+        }
+    }
+
+    private static String showUserInfo(User loggedUser) {
+        if (!loggedUser.getUsername().equals("Tempuser")) {
+            String username = loggedUser.getUsername();
+            String role = loggedUser.getRole();
+            return "User: " + username + " Role: " + role;
+        }
+        return "";
+    }
+
+    //checks if loggedUser role is admin, changes options accordingly
+    private static void checkUserRole(User loggedUser, Scanner scanner) throws SQLException {
+        if (loggedUser.getRole().equals("admin")) {
+            System.out.println("3. Product Management");
+            System.out.println("4. Admin Management");
+            System.out.println("5. Exit");
+            System.out.println();
+
+            switch (Integer.parseInt(scanner.nextLine())) {
+                case 1:
+                    loginUser(scanner);
+                    break;
+                case 2:
+                    createUser(scanner);
+                    break;
+                case 3:
+                    productManagement(scanner);
+                    break;
+                case 4:
+                    adminManagement(scanner);
+                    break;
+                case 5:
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Choose one of the available numbers");
+                    break;
+            }
+        } else {
+            System.out.println("3. Exit");
+            System.out.println();
+
+            switch (Integer.parseInt(scanner.nextLine())) {
+                case 1:
+                    loginUser(scanner);
+                    break;
+                case 2:
+                    createUser(scanner);
+                    break;
+                case 3:
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Choose one of the available numbers");
+                    break;
+            }   
+        }
+
     }
 }
