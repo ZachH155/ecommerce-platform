@@ -1,0 +1,71 @@
+Development Documentation
+    
+    Javadocs 
+        Ensure that all public classes and methods are documented using Javadocs. This helps in understanding the purpose and usage of the code.
+
+    Source Code Directory Structure
+        The project follows a standard maven directory structure:
+    
+        ecommerce-platform/
+    ├── .gitignore
+    ├── .vscode/
+    │   └── settings.json
+    ├── dependency-reduced-pom.xml
+    ├── Documentation/
+    │   └── DevelopersDoc.txt
+    ├── pom.xml
+    ├── src/
+    │   ├── main/
+    │   │   └── java/
+    │   │       └── group16/
+    │   │           └── classes/
+    │   │               ├── User/
+    │   │               │   ├── Admin.java
+    │   │               │   ├── Buyer.java
+    │   │               │   ├── DatabaseConnectionZ.java
+    │   │               │   ├── Seller.java
+    │   │               │   ├── User.java
+    │   │               │   ├── UserDAO.java
+    │   │               │   └── UserService.java
+    │   │               ├── Product/
+    │   │               │   ├── DatabaseConnectionD.java
+    │   │               │   ├── Product.java
+    │   │               │   ├── ProductDAO.java
+    │   │               │   └── ProductService.java
+    │   │               └── App.java
+    │   └── test/
+    │       └── java/
+    │           └── grup16/
+    │               └── AppTest.java
+    └── target/
+        ├── classes/
+        ├── surefire-reports/
+        └── test-classes/
+
+    Build Process
+        To compile the project, use maven. Run the following command in the root directory
+            
+            - mvn clean install
+        
+    Compiler Time Dependencies
+        The project uses the following Dependencies:
+            - JUnit 4.11 for testing
+            - jBCrypt 0.4 for password hashing
+            - PostgreSQL JDBC Driver 42.7.4 for database connectivity
+    
+    Development standards
+        - follow Java naming conventions.
+        - Ensure all public methods and classes are documented with Javadocs.
+        - Write unit tests for all new features and bug fixes.
+    
+    Setting Up a Database for Development
+        - Install PostgreSQL.
+        - Create a database named postgres.
+        - Update the database connection details in DatabaseConnectionD.java and DatabaseConnectionZ.java if necessary.
+
+    Getting the Source Code from the Repository
+        Clone the repository using the following command:
+    
+            git clone <repository-url>
+    
+                Replace <repository-url> with the actual URL of the repository.
