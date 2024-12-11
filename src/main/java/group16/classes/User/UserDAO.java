@@ -9,14 +9,18 @@ import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAO {
+    public Connection connection;
     public boolean connectionStatus;
     public boolean loginSuccess = false;
+
+    public UserDAO(Connection connection) {
+        this.connection = connection;
+    }
 
     public void addUser(User user) throws SQLException {
         String sql = "INSERT INTO users(username, password, email, role) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = DatabaseConnectionZ.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (PreparedStatement statement = connection.prepareStatement(sql);) {
 
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
@@ -38,9 +42,9 @@ public class UserDAO {
         User loggedUser = new User();
         String sql = "SELECT * FROM users";
 
-        try (Connection connection = DatabaseConnectionZ.getConnection();) {
-            var statement = connection.createStatement();
-            var result = statement.executeQuery(sql);
+        try (var statement = connection.createStatement();
+            var result = statement.executeQuery(sql);) {
+            
 
             connectionStatus = true;
 
@@ -88,9 +92,9 @@ public class UserDAO {
         String sql = "SELECT * FROM users";
         List<User> userList = new ArrayList<User>();
         
-        try (Connection connection = DatabaseConnectionZ.getConnection();) {
-            var statement = connection.createStatement();
-            var result = statement.executeQuery(sql);
+        try (var statement = connection.createStatement();
+            var result = statement.executeQuery(sql);) {
+            
 
             connectionStatus = true;
 

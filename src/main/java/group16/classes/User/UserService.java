@@ -8,11 +8,11 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     
-    public UserDAO DAO = new UserDAO();
+    public UserDAO DAO;
 
     //constructor
-    public UserService() {
-        DAO = new UserDAO();
+    public UserService(UserDAO DAO) {
+        this.DAO = DAO;
     }
 
     //methods

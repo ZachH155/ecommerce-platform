@@ -2,24 +2,30 @@ package group16;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 import group16.classes.User.DatabaseConnectionZ;
+import group16.classes.User.User;
+import group16.classes.User.UserDAO;
 import group16.classes.User.UserService;
 import group16.classes.Product.ProductService;
 import group16.classes.Product.DatabaseConnectionD;
+import group16.classes.Product.Product;
 import group16.classes.Product.ProductDAO;
 
 
 public class App {
-    private static UserService userService = new UserService();
+    private static UserService userService;
     private static ProductService productService;
 
     public static void main(String[] args) throws SQLException {
         Connection connectionD = DatabaseConnectionD.getCon();
         Connection connectionZ = DatabaseConnectionZ.getConnection();
         ProductDAO productDAO = new ProductDAO(connectionD);
+        UserDAO userDAO = new UserDAO(connectionD);
         productService = new ProductService(productDAO);
+        userService = new UserService(userDAO);
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
