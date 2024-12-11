@@ -6,7 +6,7 @@ public class User {
     private String email;
     private String role;
     
-    //constructors
+    // constructors
     public User() {
         username = "Tempname";
         password = "Temppass";
@@ -21,8 +21,7 @@ public class User {
         this.role = role;
     }
 
-    //getters and setters
-
+    // getters and setters
     public String getUsername() {
         return username;
     }
@@ -53,8 +52,10 @@ public class User {
 
     @Override
     public String toString() {
-        
-        return "U:" + username + " P:" + password + " E:" + email + " R:" + role;
+        return "User{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }
-

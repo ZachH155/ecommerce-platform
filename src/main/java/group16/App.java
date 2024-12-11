@@ -9,17 +9,18 @@ import group16.classes.User.DatabaseConnectionZ;
 import group16.classes.User.User;
 import group16.classes.User.UserDAO;
 import group16.classes.User.UserService;
+import group16.classes.User.Admin;
+import group16.classes.User.Buyer;
+import group16.classes.User.Seller;
 import group16.classes.Product.ProductService;
 import group16.classes.Product.DatabaseConnectionD;
 import group16.classes.Product.Product;
 import group16.classes.Product.ProductDAO;
 
-
 public class App {
     private static UserService userService;
     private static ProductService productService;
     private static User loggedUser = new User();
-    
 
     public static void main(String[] args) throws SQLException {
         Connection connectionD = DatabaseConnectionD.getCon();
@@ -39,31 +40,118 @@ public class App {
             System.out.println("2. Create account");
 
             checkUserRole(loggedUser, scanner);
-            
-            }
         }
-    
+    }
 
     private static void createUser(Scanner scanner) throws SQLException {
-        User user = new User();
-
         System.out.println("___________________________________________________");
         System.out.println();
 
         System.out.println("Set role");
         System.out.println("Buyer, Seller, or Admin");
-        user.setRole(scanner.nextLine());
+        String role = scanner.nextLine().toLowerCase();
 
         System.out.println("Enter username");
-        user.setUsername(scanner.nextLine());
+        String username = scanner.nextLine();
 
         System.out.println("Enter password");
-        user.setPassword(scanner.nextLine());
+        String password = scanner.nextLine();
 
         System.out.println("Enter email");
-        user.setEmail(scanner.nextLine());
+        String email = scanner.nextLine();
+
+        User user;
+        switch (role) {
+            case "admin":
+                user = new Admin(username, password, email);
+                break;
+            case "buyer":
+                user = new Buyer(username, password, email);
+                break;
+            case "seller":
+                user = new Seller(username, password, email);
+                break;
+            default:
+                System.out.println("Invalid role. Defaulting to Buyer.");
+                user = new Buyer(username, password, email);
+                break;
+        }
 
         userService.addUser(user);
+    }
+
+    private static void checkUserRole(User loggedUser, Scanner scanner) throws SQLException {
+        switch (loggedUser.getRole()) {
+            case "admin":
+                System.out.println("3. Product Management");
+                System.out.println("4. Admin Management");
+                System.out.println("5. Exit");
+                break;
+            case "seller":
+                System.out.println("3. Product Management");
+                System.out.println("4. Exit");
+                break;
+            case "buyer":
+                System.out.println("3. View Products");
+                System.out.println("4. Exit");
+                break;
+            default:
+                System.out.println("3. Exit");
+                break;
+        }
+
+        System.out.println();
+        int choice = Integer.parseInt(scanner.nextLine());
+        switch (choice) {
+            case 1:
+                loginUser(scanner);
+                break;
+            case 2:
+                createUser(scanner);
+                break;
+            case 3:
+                if (loggedUser.getRole().equals("admin") || loggedUser.getRole().equals("seller")) {
+                    productManagement(scanner);
+                } else if (loggedUser.getRole().equals("buyer")) {
+                    viewAllProducts();
+                } else {
+                    System.exit(0);
+                }
+                break;
+            case 4:
+                if (loggedUser.getRole().equals("admin")) {
+                    adminManagement(scanner);
+                } else {
+                    System.exit(0);
+                }
+                break;
+            case 5:
+                if (loggedUser.getRole().equals("admin")) {
+                    System.exit(0);
+                } else {
+                    System.out.println("Choose one of the available numbers");
+                }
+                break;
+            default:
+                System.out.println("Choose one of the available numbers");
+                break;
+        }
+    }
+
+    private static void loginUser(Scanner scanner) throws SQLException {
+        System.out.println("___________________________________________________");
+        System.out.println("User Login");
+        System.out.println();
+        System.out.println("Enter username");
+        String username = scanner.nextLine();
+
+        System.out.println("Enter password");
+        String password = scanner.nextLine();
+        userService.getUser(username, password);
+        if (userService.DAO.loginSuccess == true) {
+            loggedUser = userService.getUser(username, password);
+            System.out.println("Login successful");
+        }
     }
 
     private static void productManagement(Scanner scanner) throws SQLException {
@@ -78,7 +166,6 @@ public class App {
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
-
             switch (choice) {
                 case 1:
                     addProduct(scanner);
@@ -104,25 +191,32 @@ public class App {
     }
 
     private static void addProduct(Scanner scanner) throws SQLException {
-        System.out.print("Enter product name: ");
+        System.out.println("Enter product name:");
         String name = scanner.nextLine();
-        System.out.print("Enter product price: ");
+        System.out.println("Enter product price:");
         double price = scanner.nextDouble();
-        System.out.print("Enter product quantity: ");
+        System.out.println("Enter product quantity:");
         int quantity = scanner.nextInt();
-        System.out.print("Enter seller ID: ");
+        scanner.nextLine(); // Consume newline
+        System.out.println("Enter seller ID:");
         int sellerId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
+
+        // Check if the seller exists
+        User seller = userService.getUserById(sellerId);
+        if (seller == null || !seller.getRole().equals("seller")) {
+            System.out.println("Seller ID does not exist or is not a seller. Please enter a valid seller ID.");
+            return;
+        }
 
         productService.addProduct(name, price, quantity, sellerId);
         System.out.println("Product added successfully.");
     }
 
     private static void viewProductsBySeller(Scanner scanner) throws SQLException {
-        System.out.print("Enter seller ID: ");
+        System.out.println("Enter seller ID:");
         int sellerId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-
         List<Product> products = productService.getProductsBySeller(sellerId);
         for (Product product : products) {
             System.out.println(product);
@@ -130,26 +224,24 @@ public class App {
     }
 
     private static void updateProduct(Scanner scanner) throws SQLException {
-        System.out.print("Enter product ID: ");
+        System.out.println("Enter product ID:");
         int id = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-        System.out.print("Enter new product name: ");
+        System.out.println("Enter new product name:");
         String name = scanner.nextLine();
-        System.out.print("Enter new product price: ");
+        System.out.println("Enter new product price:");
         double price = scanner.nextDouble();
-        System.out.print("Enter new product quantity: ");
+        System.out.println("Enter new product quantity:");
         int quantity = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-
         productService.updateProduct(id, name, price, quantity);
         System.out.println("Product updated successfully.");
     }
 
     private static void deleteProduct(Scanner scanner) throws SQLException {
-        System.out.print("Enter product ID: ");
+        System.out.println("Enter product ID:");
         int productId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-
         productService.deleteProduct(productId);
         System.out.println("Product deleted successfully.");
     }
@@ -171,7 +263,6 @@ public class App {
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
-
             switch (choice) {
                 case 1:
                     viewAllUsers();
@@ -201,7 +292,6 @@ public class App {
         System.out.print("Enter user ID: ");
         int userId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
-
         userService.deleteUser(userId);
         System.out.println("User deleted successfully.");
     }
@@ -215,82 +305,12 @@ public class App {
         }
     }
 
-    private static void loginUser(Scanner scanner) throws SQLException {
-        System.out.println("___________________________________________________");
-        System.out.println("User Login");
-        System.out.println();
-
-        System.out.println("Enter username");
-        String username = scanner.nextLine();
-        
-        System.out.println("Enter password");
-        String password = scanner.nextLine();
-
-
-        userService.getUser(username, password);
-
-        if (userService.DAO.loginSuccess == true) {
-            loggedUser = userService.getUser(username, password);
-            System.out.println("Login successful");
-        }
-    }
-
     private static String showUserInfo(User loggedUser) {
-        if (!loggedUser.getUsername().equals("Tempuser")) {
+        if (!loggedUser.getUsername().equals("Tempname")) {
             String username = loggedUser.getUsername();
             String role = loggedUser.getRole();
             return "User: " + username + " Role: " + role;
         }
         return "";
-    }
-
-    //checks if loggedUser role is admin, changes options accordingly
-    private static void checkUserRole(User loggedUser, Scanner scanner) throws SQLException {
-        if (loggedUser.getRole().equals("admin")) {
-            System.out.println("3. Product Management");
-            System.out.println("4. Admin Management");
-            System.out.println("5. Exit");
-            System.out.println();
-
-            switch (Integer.parseInt(scanner.nextLine())) {
-                case 1:
-                    loginUser(scanner);
-                    break;
-                case 2:
-                    createUser(scanner);
-                    break;
-                case 3:
-                    productManagement(scanner);
-                    break;
-                case 4:
-                    adminManagement(scanner);
-                    break;
-                case 5:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Choose one of the available numbers");
-                    break;
-            }
-        } else {
-            System.out.println("3. Exit");
-            System.out.println();
-
-            switch (Integer.parseInt(scanner.nextLine())) {
-                case 1:
-                    loginUser(scanner);
-                    break;
-                case 2:
-                    createUser(scanner);
-                    break;
-                case 3:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Choose one of the available numbers");
-                    break;
-            }   
-        }
-
     }
 }

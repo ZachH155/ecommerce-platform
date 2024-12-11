@@ -1,0 +1,12 @@
+group16\classes\User\User.class
+group16\classes\User\DatabaseConnectionZ.class
+group16\classes\User\Seller.class
+group16\classes\User\Buyer.class
+group16\classes\User\UserDAO.class
+group16\App.class
+group16\classes\Product\ProductService.class
+group16\classes\Product\Product.class
+group16\classes\Product\ProductDAO.class
+group16\classes\Product\DatabaseConnectionD.class
+group16\classes\User\Admin.class
+group16\classes\User\UserService.class
