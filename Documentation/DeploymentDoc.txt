@@ -1,0 +1,20 @@
+Deployment Documenation
+
+pgAdmin 4
+    Before getting started on anything else, make sure you have the latest
+    version of pgAdmin 4. You can download pgAdmin here: https://www.pgadmin.org/download/
+    Make sure to download and install the correct download for your computers OS.
+
+Download the files
+    Go to the github page here: https://github.com/ZachH155/ecommerce-platform
+    and download all the files
+
+
+Running the app
+    Open up the terminal and enter "cd <your file directory>"
+    (make sure you are in the ecommerce-platform folder!),
+    then enter "mvn clean install",
+    and finally enter "java -jar target/ecommerce-platform-1.0-SNAPSHOT.jar"
+    
+
+    
