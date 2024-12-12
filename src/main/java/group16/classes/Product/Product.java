@@ -47,4 +47,15 @@ public class Product {
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", sellerId=" + sellerId +
+                '}';
+    }
 }

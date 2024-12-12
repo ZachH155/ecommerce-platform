@@ -1,0 +1,70 @@
+User Documentation
+
+Introduction
+    This application is meant to simulate an Ecommerce platform, the application connects to a
+    PostgreSQL database where it stores all user and product data.
+
+
+Classes
+    There are two different class "types" in this application, the User and Product classes.
+    
+    The User classes handl everything to do with the Users, and the Product 
+    classes handle the everything to do with the Products.
+
+    User Classes
+        User.java
+            a super class, used to create a new User.
+        
+        UserDAO.java
+            Data Access Object, handles the user database functions.
+        
+        UserService.java
+            Sends information to UserDAO.
+        
+        Buyer.java
+            Extends User.java, used to make a Buyer account.
+            Buyers can browse and view products, search for a
+            specific product, and see product info.
+
+        Seller.java
+            Extends User.java, used to make a Seller account.
+            Sellers can add, update, and delete their own products,
+            they should be able to view a list of all their products
+            that they have listed.
+
+        Admin.java
+            Gives access to the Admin Management Console.
+            Admins can view a list of all users, can delete a user from
+            the system, and see a list of products that are in the system.
+
+    Product Classes
+        Product.java
+            Used to create a new Product.
+
+        ProductDAO.java
+            Data Access Object, handles the product database functions.
+        
+        ProductService.java
+            Sends information to ProductDAO.
+    
+    DatabaseConnection.java
+        Used to connect to the PostgreSQL database.
+    
+
+Class Diagram
+A diagram of all the related classes.
+
+              User___________       UserDAO ----- DatabaseConnection
+               |             \_      |                      |
+       Admin, Buyer, Seller   __UserService                 |
+                \__     _ | __/                          ProuductDAO
+                   \   /  |_________________                |
+                    App ---------------- Product ------ ProuductService
+
+
+
+    
+
+
+
+
